@@ -12,7 +12,7 @@ enum PlanckState {
     Locked(bool),
 }
 
-impl fmt::Display for PlanckState {
+impl fmt::Debug for PlanckState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", "Locked") // fixme - display enum state
     }
@@ -23,9 +23,9 @@ struct Planck {
     state: PlanckState
 }
 
-impl fmt::Display for Planck {
+impl fmt::Debug for Planck {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Plank State: {}", self.state)
+        write!(f, "Plank {{\n\t\tstate: {:?}\n\t}}", self.state)
     }
 }
 
@@ -46,13 +46,13 @@ impl Plancks {
     }
 }
 
-impl fmt::Display for Plancks {
+impl fmt::Debug for Plancks {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut out = String::new();
-        for plank in self.values.iter() {
-            out += &format!("\n{}", plank);
+        for (i, plank) in self.values.iter().enumerate() {
+            out += &format!("\n\t{}: {:?}", i, plank);
         }
-        write!(f, "{}", out)
+        write!(f, "Plancks [{}]", out)
     }
 }
 
@@ -64,5 +64,5 @@ fn main() {
 
     let planks = Plancks::new();
 
-    println!("{}", planks);
+    println!("{:?}", planks);
 }
