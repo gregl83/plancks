@@ -1,35 +1,58 @@
-const DEFAULT_BUFFER_SIZE: usize = 10_000_000;
+use std::fmt;
+
+const DEFAULT_BUFFER_SIZE: usize = 33;
 
 // todo - control-flow operations applied (series/parallel); state MUST reflect status there
 // requirements:
 //  - when to consume
 //  - when consumed
 //  - when to overwrite
-#[derive(Debug, Clone)]
-enum PlankState {
+#[derive(Copy, Clone)]
+enum PlanckState {
     Locked(bool),
 }
 
-#[derive(Debug, Clone)]
-struct Planck {
-    state: PlankState
+impl fmt::Display for PlanckState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", "Locked") // fixme - display enum state
+    }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Copy, Clone)]
+struct Planck {
+    state: PlanckState
+}
+
+impl fmt::Display for Planck {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Plank State: {}", self.state)
+    }
+}
+
+#[derive(Copy, Clone)]
 struct Plancks {
-    values: Vec<Planck>,
+    values: [Planck; DEFAULT_BUFFER_SIZE],
 }
 
 impl Plancks {
     pub fn new() -> Plancks {
         Plancks {
-            // fixme - vectors will store on heap, consider using array to persist on stack
-            values: vec![
+            values: [
                 Planck {
-                    state: PlankState::Locked(false)
-                }; 2 // fixme - BUFFER_SIZE
-            ]
+                    state: PlanckState::Locked(false)
+                }; DEFAULT_BUFFER_SIZE
+            ],
         }
+    }
+}
+
+impl fmt::Display for Plancks {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut out = String::new();
+        for plank in self.values.iter() {
+            out += &format!("\n{}", plank);
+        }
+        write!(f, "{}", out)
     }
 }
 
@@ -40,8 +63,6 @@ fn main() {
     // todo - overflow panic (cleanup/dump state?)
 
     let planks = Plancks::new();
-    println!("{:?}", planks);
-    println!("max size: {}", DEFAULT_BUFFER_SIZE);
 
-    let test = [0; 100];
+    println!("{}", planks);
 }
