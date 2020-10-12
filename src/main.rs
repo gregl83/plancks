@@ -4,9 +4,10 @@ mod types;
 use collections::ring_buffer::RingBuffer;
 
 fn main() {
+    let buffer = RingBuffer::new();
     println!(
         "{:?}",
-        RingBuffer::new()
+        buffer
     );
 
     // todo - need workers for parallelism
