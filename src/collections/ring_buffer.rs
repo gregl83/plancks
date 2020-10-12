@@ -16,6 +16,12 @@ impl RingBuffer {
             buffer: [Event::new(); BUFFER_SIZE],
         }
     }
+
+    pub fn iterate(self) {
+        for _event in self.buffer.iter() {
+            let _a = 1;
+        }
+    }
 }
 
 impl fmt::Debug for RingBuffer {

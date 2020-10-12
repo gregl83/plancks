@@ -6,9 +6,9 @@ pub fn criterion_benchmark(c: &mut Criterion) {
         RingBuffer::new();
     }));
 
-    c.bench_function("iterate buffer", |b| b.iter(|| {
-        let buffer = RingBuffer::new();
-        // fixme - buffer.iter() and iter.next needed
+    let buffer = RingBuffer::new();
+    c.bench_function("iterate ring buffer", |b| b.iter(|| {
+        let _event = buffer.iterate(); // fixme - buffer.iter() and iter.next needed
     }));
 }
 
