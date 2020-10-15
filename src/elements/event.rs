@@ -1,4 +1,5 @@
 use std::fmt;
+use crate::elements::Element;
 
 #[derive(Copy, Clone)]
 pub struct EventState {
@@ -7,6 +8,7 @@ pub struct EventState {
     unmarshalled: bool,
 }
 
+// todo - decide how dynamic to make this
 impl EventState {
     pub fn new() -> EventState {
         EventState {
@@ -19,25 +21,25 @@ impl EventState {
 
 #[derive(Copy, Clone)]
 pub struct Event {
-    locked: bool,
     state: EventState
 }
 
 impl Event {
-    pub fn new() -> Event {
+    pub fn new() -> Self {
         Event {
-            locked: false,
             state: EventState::new()
         }
     }
+}
 
-    pub fn write(&mut self) {
+impl Element for Event {
+    fn write(&mut self) {
         self.state = EventState::new();
     }
 }
 
 impl fmt::Debug for Event {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Event {{\n\t\tlocked: {:?}\n\t}}", self.locked)
+        write!(f, "Event {{ }}")
     }
 }

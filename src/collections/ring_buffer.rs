@@ -1,6 +1,9 @@
 use std::fmt;
+use std::fmt::Debug;
 
-use crate::types::event::Event;
+use crate::collections::Buffer;
+use crate::elements::event::Event;
+use crate::elements::Element;
 
 const BUFFER_SIZE: usize = 1_000_000;
 const DEBUG_SLICE_SIZE: usize = 10;
@@ -35,7 +38,7 @@ const DEBUG_SLICE_SIZE: usize = 10;
 // state c
 //
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub struct BufferIndex {
     pub key: usize,
 }
@@ -53,13 +56,39 @@ impl BufferIndex {
 // state index
 // read index
 
-#[derive(Copy, Clone)]
-pub struct RingBuffer {
-    // buffer of events
-    buf: [
-        Event;
-        BUFFER_SIZE
-    ],
+// #[derive(Clone)]
+// struct Message {
+//     id: u128
+// }
+//
+// #[derive(Clone)]
+// struct Bufferr<B: Element + Clone> {
+//     buf: Vec<B>
+// }
+//
+// impl Element for Message {
+//     fn get_id(&self) -> u128 {
+//         1
+//     }
+// }
+//
+// impl<B: Element + Clone> Bufferr<B> {
+//     pub fn new(element: B) -> Self {
+//         Buffer {
+//             buf: vec![element; 1000000],
+//         }
+//     }
+// }
+//
+// let message = Message {
+//      id: 1
+// };
+// let buffer = Buffer::new(message);
+
+#[derive(Clone)]
+pub struct RingBuffer<E: Element> {
+    // vector of elements (Element trait)
+    buf: Vec<E>,
 
     // index for reads
     idx_r: BufferIndex,
@@ -68,42 +97,43 @@ pub struct RingBuffer {
     idx_w: BufferIndex,
 }
 
-impl RingBuffer {
-    pub fn new() -> RingBuffer {
+
+impl<E: Element + Clone> RingBuffer<E> {
+    pub fn new(el: E) -> Self {
         RingBuffer {
-            buf: [
-                Event::new();
-                BUFFER_SIZE
-            ],
+            buf: vec![el; BUFFER_SIZE],
             idx_r: BufferIndex::new(),
             idx_w: BufferIndex::new(),
         }
     }
 
     pub fn len(&self) -> usize { self.buf.len() }
+}
 
-    pub fn write(&self, _event: Event) {
+impl<E: Element> Buffer for RingBuffer<E> {
+    fn write(&self, el: E) {
         // fixme - implement lifetime parameter
         // self.buf[self.idx_w.key].write(); // fixme - chose write type
         // self.idx_w.key += 1;
     }
 }
 
-impl Iterator for RingBuffer {
-    type Item = Event;
+// FIXME - lifetime parameter on Iterator trait
+impl<E: Element> Iterator for RingBuffer<E> {
+    type Item = E;
 
     fn next(&mut self) -> Option<Self::Item> {
         // todo - return ready values
         if self.idx_r.key == self.buf.len() {
             self.idx_r.key = 0;
         }
-        let res = Some(self.buf[self.idx_r.key]);
+        let res = Some(&self.buf[self.idx_r.key]);
         self.idx_r.key += 1;
         res
     }
 }
 
-impl fmt::Debug for RingBuffer {
+impl<E: Element + Debug> fmt::Debug for RingBuffer<E> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let buffer_slice = &self.buf[0..DEBUG_SLICE_SIZE];
         let mut out = String::new();

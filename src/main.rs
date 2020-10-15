@@ -1,10 +1,13 @@
 mod collections;
-mod types;
+mod elements;
 
 use collections::ring_buffer::RingBuffer;
+use elements::event::Event;
 
 fn main() {
-    let buffer = RingBuffer::new();
+    let buffer = RingBuffer::new(
+        Event::new()
+    );
     println!(
         "{:?}",
         buffer
