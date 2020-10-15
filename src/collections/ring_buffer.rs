@@ -1,8 +1,7 @@
 use std::fmt;
 use std::fmt::Debug;
 
-use crate::collections::Buffer;
-use crate::elements::event::Event;
+use crate::collections::{Buffer, StreamingIterator};
 use crate::elements::Element;
 
 const BUFFER_SIZE: usize = 1_000_000;
@@ -110,7 +109,7 @@ impl<E: Element + Clone> RingBuffer<E> {
     pub fn len(&self) -> usize { self.buf.len() }
 }
 
-impl<E: Element> Buffer for RingBuffer<E> {
+impl<'a, E: Element> Buffer<'a, E> for RingBuffer<E> {
     fn write(&self, el: E) {
         // fixme - implement lifetime parameter
         // self.buf[self.idx_w.key].write(); // fixme - chose write type
@@ -119,15 +118,15 @@ impl<E: Element> Buffer for RingBuffer<E> {
 }
 
 // FIXME - lifetime parameter on Iterator trait
-impl<E: Element> Iterator for RingBuffer<E> {
+impl<'a, E: Element> StreamingIterator<'a> for RingBuffer<E> {
     type Item = E;
 
-    fn next(&mut self) -> Option<Self::Item> {
+    fn next(&'a mut self) -> Option<&mut Self::Item> {
         // todo - return ready values
         if self.idx_r.key == self.buf.len() {
             self.idx_r.key = 0;
         }
-        let res = Some(&self.buf[self.idx_r.key]);
+        let res = Some(&mut self.buf[self.idx_r.key]);
         self.idx_r.key += 1;
         res
     }

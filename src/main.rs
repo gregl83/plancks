@@ -5,9 +5,12 @@ use collections::ring_buffer::RingBuffer;
 use elements::event::Event;
 
 fn main() {
-    let buffer = RingBuffer::new(
+    let mut buffer = RingBuffer::new(
         Event::new()
     );
+
+    // todo - test streaming iterator
+
     println!(
         "{:?}",
         buffer
