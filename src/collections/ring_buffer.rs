@@ -24,6 +24,12 @@ const DEBUG_SLICE_SIZE: usize = 10;
 // ring_buffer.next_in_state(state)
 // ring_buffer.idx = state{  }
 
+// [   ]
+// [   ]
+// [   ]
+// [   ]
+
+
 
 // States in Ring Buffer
 // 1. journal
@@ -61,7 +67,7 @@ impl BufferIndex {
 // }
 //
 // #[derive(Clone)]
-// struct Bufferr<B: Element + Clone> {
+// struct Buffer<B: Element + Clone> {
 //     buf: Vec<B>
 // }
 //
